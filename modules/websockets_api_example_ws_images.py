@@ -6,6 +6,7 @@ import os
 import sys
 import uuid
 import json
+import random
 import urllib.request
 import urllib.parse
 
@@ -72,35 +73,52 @@ def inference_iamge(url, style_name,
 
     with open(json_path, 'r', encoding='utf-8') as file:
         prompt = json.load(file)
-    # #set the text prompt for our positive CLIPTextEncode
-    # prompt["6"]["inputs"]["text"] = "masterpiece best quality man"
-
-    # import random
-    # seed = random.randint(1, 2 ** 32 - 1)
-    # #set the seed for our KSampler node
-    # prompt["3"]["inputs"]["seed"] = seed
 
     prompt = change_json_file(prompt)
+    prompt_id = queue_prompt(prompt, url)['prompt_id']
+    output_images = {}
+    current_node = ""
 
-    server_address=url
     ws = websocket.WebSocket()
     ws.connect("ws://{}/ws?clientId={}".format(url, client_id))
 
+    while True:
+        out = ws.recv()
+        if isinstance(out, str):
+            message = json.loads(out)
+            if message['type'] == 'status':
+                progress(random.randint(1,3) / 100, desc="Loading Model...")
+            if message['type'] == 'progress':
+                data = message['data']
+                if data["value"] >= 2:
+                    # progress(message["data"]["value"] / message["data"]["max"], desc="Progressing",)
+                    progress(data["value"] / data["max"], desc="Progressing",)            
+            if message['type'] == 'executing':
+                data = message['data']
+                # if data['node'] == 'save_image_websocket_node':
+                #     progress(1, desc="Finished",)
+                #     time.sleep(0.5)
+                if data['prompt_id'] == prompt_id:
+                    if data['node'] is None:
+                        break #Execution is done
+                    else:
+                        current_node = data['node']            
+        else:
+            if current_node == 'save_image_websocket_node':
+                images_output = output_images.get(current_node, [])
+                images_output.append(out[8:])
+                output_images[current_node] = images_output
+
+    # if process_message["type"] == "status":
+    #     progress(0, desc="Loading Model...")
+
+    # if process_message["type"] == "progress" and process_message["data"]["node"] == "3":
+    #     progress(process_message["data"]["value"] / process_message["data"]["max"], 
+    #                 desc="Progressing",)
     
-    images = get_images(ws, prompt, url)
 
-    process_message = ws.recv()
-
-    if process_message["type"] == "status":
-        progress(0, desc="Loading Model...")
-
-    if process_message["type"] == "progress" and process_message["data"]["node"] == "3":
-        progress(process_message["data"]["value"] / process_message["data"]["max"], 
-                    desc="Progressing",)
-    
-
-    for node_id in images:
-        for image_data in images[node_id]:
+    for node_id in output_images:
+        for image_data in output_images[node_id]:
             from PIL import Image
             import io
             image = Image.open(io.BytesIO(image_data))
