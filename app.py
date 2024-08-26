@@ -1,5 +1,4 @@
 import random
-import sys
 import argparse
 
 import gradio as gr
@@ -22,8 +21,7 @@ if __name__ == "__main__":
     address = f"127.0.0.1:{args.comfy_port}"
 
 
-# 对进行推理的 gradio 界面的参数进行预处理返回json格式
-# 来自组件 random_seed, seed_number, image_aspect_ratio, user_prompt
+# 对进行推理的 gradio 界面的参数进行预处理返回image
 def inference_image_preprocess(style_name, random_seed: bool, seed_number, image_aspect_ratio, user_prompt,):
     # return json 格式
     json_file = load_json_data(style_name)
@@ -41,6 +39,9 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
     if image_aspect_ratio == '16:9':
         width = 1456
         heigh = 816
+    if image_aspect_ratio == '18:9':
+        width = 1600
+        heigh = 800
     
     # def prompt
     prompt = user_prompt
@@ -50,18 +51,6 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
     image = inference_image(json_file, address)
 
     return image
-
-
-def get_argument(style_name, random_seed, seed_number, image_aspect_ratio, user_prompt):
-    data = {
-        "style_name": style_name,
-        "random_seed": random_seed,
-        "seed_number": seed_number,
-        "image_aspect_ratio": image_aspect_ratio,
-        "user_prompt": user_prompt
-    }
-
-    return data
 
 
 with gr.Blocks() as demo:
@@ -133,4 +122,4 @@ with gr.Blocks() as demo:
 
     generate.click(inference_image_preprocess, inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt], outputs=image_show)
 
-demo.launch(share=False, server_port=args.port, )
+demo.launch(share=False, server_port=args.port,)
