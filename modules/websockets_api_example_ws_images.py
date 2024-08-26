@@ -12,25 +12,16 @@ import urllib.parse
 
 import gradio as gr
 
-from change_json import load_json_data
+# from change_json import load_json_data
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 client_id = str(uuid.uuid4())
 
-# #set the text prompt for our positive CLIPTextEncode
-# prompt["6"]["inputs"]["text"] = "masterpiece best quality man"
-
-# import random
-# seed = random.randint(1, 2 ** 32 - 1)
-# #set the seed for our KSampler node
-# prompt["3"]["inputs"]["seed"] = seed
-
-
-def queue_prompt(prompt, url):
+def queue_prompt(prompt, server_address):
     p = {"prompt": prompt, "client_id": client_id}
     data = json.dumps(p).encode('utf-8')
-    req =  urllib.request.Request("http://{}/prompt".format(url), data=data)
+    req =  urllib.request.Request("http://{}/prompt".format(server_address), data=data)
     return json.loads(urllib.request.urlopen(req).read())
 
 def get_image(filename, subfolder, folder_type):
@@ -66,17 +57,8 @@ def get_images(ws, prompt, url):
 
     return output_images
 
-# comfy_server_address, style_name, random_seed, seed_number, image_aspect_ratio, user_prompt
-def inference_image(url, progress=gr.Progress()):
-    # current_dir = os.path.dirname(os.path.abspath(__file__))
-    # json_path = os.path.join(current_dir, '..', 'workflow_api', f'{style_name}.json')
-
-    # with open(json_path, 'r', encoding='utf-8') as file:
-    #     prompt = json.load(file)
-
-    # prompt = change_json_file(prompt)
-    
-    prompt = load_json_data("无")
+def inference_image(data, url, progress=gr.Progress()):
+    prompt = data
 
     # prompt = json.loads(prompt_text)
     prompt_id = queue_prompt(prompt, url)['prompt_id']
@@ -110,14 +92,6 @@ def inference_image(url, progress=gr.Progress()):
                 images_output.append(out[8:])
                 output_images[current_node] = images_output
 
-    # if process_message["type"] == "status":
-    #     progress(0, desc="Loading Model...")
-
-    # if process_message["type"] == "progress" and process_message["data"]["node"] == "3":
-    #     progress(process_message["data"]["value"] / process_message["data"]["max"], 
-    #                 desc="Progressing",)
-    
-
     for node_id in output_images:
         for image_data in output_images[node_id]:
             from PIL import Image
@@ -128,9 +102,12 @@ def inference_image(url, progress=gr.Progress()):
 
 
 if __name__ == "__main__":
-    server_address = "127.0.0.1:8188"
+    server_address = "127.0.0.1:8199"
 
-    image = inference_image(server_address,)
+    from change_json import change_file
+    data = change_file.change_无(1, 1920, 1080, "a beautiful girl")
+
+    image = inference_image(data, server_address)
 
     image.show()
 # else:

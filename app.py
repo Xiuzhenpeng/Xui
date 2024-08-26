@@ -6,7 +6,7 @@ import gradio as gr
 
 from modules.websockets_api_example_ws_images import inference_image
 from modules.change_json import load_json_data
-from modules.change_json import change_无
+from modules.change_json import change_file
 
 
 # 添加参数
@@ -19,7 +19,7 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
 
-    comfy_server_address = f"127.0.0.1:{args.comfy_port}"
+    address = f"127.0.0.1:{args.comfy_port}"
 
 
 # 对进行推理的 gradio 界面的参数进行预处理返回json格式
@@ -45,9 +45,11 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
     # def prompt
     prompt = user_prompt
 
-    json_file = change_无(seed, width, heigh, prompt)
+    json_file = change_file.change_无(seed, width, heigh, prompt)
 
-    image = inference_image(json_file, comfy_server_address,)
+    image = inference_image(json_file, address)
+
+    return image
 
 
 def get_argument(style_name, random_seed, seed_number, image_aspect_ratio, user_prompt):
@@ -87,7 +89,7 @@ with gr.Blocks() as demo:
                                             elem_id="user_prompt-textbox")
             with gr.Column(min_width=200):
                 generate = gr.Button(value="生成图片", size='lg', variant='primary')
-                comfy_server_address = gr.Textbox(value=comfy_server_address, visible=False)
+                # comfy_server_address = gr.Textbox(value=address, visible=False)
                 
         with gr.Column(scale=1,):
                 # Controlnet
@@ -129,6 +131,6 @@ with gr.Blocks() as demo:
                             label="风格展示", interactive=False, format="png", allow_preview=False)
                     style_name = gr.Radio(value="无", choices=images_labels, label="风格选择", interactive=True)
 
-    generate.click(inference_image, inputs=[comfy_server_address, style_name, random_seed, seed_number, image_aspect_ratio, user_prompt], outputs=image_show)
+    generate.click(inference_image_preprocess, inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt], outputs=image_show)
 
 demo.launch(share=False, server_port=args.port, )
