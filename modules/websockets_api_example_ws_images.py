@@ -12,6 +12,8 @@ import urllib.parse
 
 import gradio as gr
 
+from change_json import load_json_data
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 client_id = str(uuid.uuid4())
@@ -31,15 +33,15 @@ def queue_prompt(prompt, url):
     req =  urllib.request.Request("http://{}/prompt".format(url), data=data)
     return json.loads(urllib.request.urlopen(req).read())
 
-# def get_image(filename, subfolder, folder_type):
-#     data = {"filename": filename, "subfolder": subfolder, "type": folder_type}
-#     url_values = urllib.parse.urlencode(data)
-#     with urllib.request.urlopen("http://{}/view?{}".format(server_address, url_values)) as response:
-#         return response.read()
+def get_image(filename, subfolder, folder_type):
+    data = {"filename": filename, "subfolder": subfolder, "type": folder_type}
+    url_values = urllib.parse.urlencode(data)
+    with urllib.request.urlopen("http://{}/view?{}".format(server_address, url_values)) as response:
+        return response.read()
 
-# def get_history(prompt_id):
-#     with urllib.request.urlopen("http://{}/history/{}".format(server_address, prompt_id)) as response:
-#         return json.loads(response.read())
+def get_history(prompt_id):
+    with urllib.request.urlopen("http://{}/history/{}".format(server_address, prompt_id)) as response:
+        return json.loads(response.read())
 
 def get_images(ws, prompt, url):
     prompt_id = queue_prompt(prompt, url)['prompt_id']
@@ -64,17 +66,19 @@ def get_images(ws, prompt, url):
 
     return output_images
 
+# comfy_server_address, style_name, random_seed, seed_number, image_aspect_ratio, user_prompt
+def inference_image(url, progress=gr.Progress()):
+    # current_dir = os.path.dirname(os.path.abspath(__file__))
+    # json_path = os.path.join(current_dir, '..', 'workflow_api', f'{style_name}.json')
 
-def inference_iamge(url, style_name, 
-                    progress=gr.Progress(),
-                    ):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    json_path = os.path.join(current_dir, '..', 'workflow_api', f'{style_name}.json')
+    # with open(json_path, 'r', encoding='utf-8') as file:
+    #     prompt = json.load(file)
 
-    with open(json_path, 'r', encoding='utf-8') as file:
-        prompt = json.load(file)
+    # prompt = change_json_file(prompt)
+    
+    prompt = load_json_data("无")
 
-    prompt = change_json_file(prompt)
+    # prompt = json.loads(prompt_text)
     prompt_id = queue_prompt(prompt, url)['prompt_id']
     output_images = {}
     current_node = ""
@@ -91,18 +95,15 @@ def inference_iamge(url, style_name,
             if message['type'] == 'progress':
                 data = message['data']
                 if data["value"] >= 2:
-                    # progress(message["data"]["value"] / message["data"]["max"], desc="Progressing",)
+                    progress(message["data"]["value"] / message["data"]["max"], desc="Progressing",)
                     progress(data["value"] / data["max"], desc="Progressing",)            
             if message['type'] == 'executing':
                 data = message['data']
-                # if data['node'] == 'save_image_websocket_node':
-                #     progress(1, desc="Finished",)
-                #     time.sleep(0.5)
                 if data['prompt_id'] == prompt_id:
                     if data['node'] is None:
                         break #Execution is done
                     else:
-                        current_node = data['node']            
+                        current_node = data['node']
         else:
             if current_node == 'save_image_websocket_node':
                 images_output = output_images.get(current_node, [])
@@ -127,11 +128,10 @@ def inference_iamge(url, style_name,
 
 
 if __name__ == "__main__":
-    from change_json import change_json_file    
     server_address = "127.0.0.1:8188"
 
-    image = inference_iamge(server_address, "无")
+    image = inference_image(server_address,)
 
     image.show()
-else:
-    from modules.change_json import change_json_file
+# else:
+#     from modules.change_json import change_json_file
