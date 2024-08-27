@@ -24,9 +24,61 @@ class change_file():
         data["3"]["inputs"]["seed"] = int(seed)
         data["5"]["inputs"]["width"] = int(width)
         data["5"]["inputs"]["height"] = int(height)
-        data["6"]["inputs"]["text"] = str(prompt)
+        if prompt == "":
+            bais_prompt = data["6"]["inputs"]["text"]
+            data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+        else:
+            data["6"]["inputs"]["text"] = prompt
 
         return data
+    
+    def change_经典渲染(seed, width, height, prompt):
+         data = load_json_data("经典渲染")
+         if seed == -1:
+                seed = random.randint(1, 2 ** 32 - 1)
+         data["3"]["inputs"]["seed"] = int(seed)
+         data["5"]["inputs"]["width"] = int(width)
+         data["5"]["inputs"]["height"] = int(height)
+         bais_prompt = data["6"]["inputs"]["text"]
+         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+         
+         return data
+    
+    def change_绚丽鲜橙(seed, width, height, prompt):
+         data = load_json_data("绚丽鲜橙")
+         if seed == -1:
+                seed = random.randint(1, 2 ** 32 - 1)
+         data["3"]["inputs"]["seed"] = int(seed)
+         data["5"]["inputs"]["width"] = int(width)
+         data["5"]["inputs"]["height"] = int(height)
+         bais_prompt = data["6"]["inputs"]["text"]
+         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+         
+         return data
+    
+    def change_真实照片(seed, width, height, prompt):
+         data = load_json_data("真实照片")
+         if seed == -1:
+                seed = random.randint(1, 2 ** 32 - 1)
+         data["3"]["inputs"]["seed"] = int(seed)
+         data["5"]["inputs"]["width"] = int(width)
+         data["5"]["inputs"]["height"] = int(height)
+         bais_prompt = data["6"]["inputs"]["text"]
+         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+         
+         return data
+    
+    def change_马克笔手绘(seed, width, height, prompt):
+         data = load_json_data("马克笔手绘")
+         if seed == -1:
+                seed = random.randint(1, 2 ** 32 - 1)
+         data["3"]["inputs"]["seed"] = int(seed)
+         data["5"]["inputs"]["width"] = int(width)
+         data["5"]["inputs"]["height"] = int(height)
+         bais_prompt = data["6"]["inputs"]["text"]
+         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+         
+         return data
 
 
 if __name__ == "__main__":
