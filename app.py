@@ -46,7 +46,9 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
     # def prompt
     prompt = user_prompt
 
-    json_file = change_file.change_无(seed, width, heigh, prompt)
+    change_method_name = f"change_{style_name}"
+    change_method = getattr(change_file, change_method_name)
+    json_file = change_method(seed, width, heigh, prompt)
 
     image = inference_image(json_file, address)
 
