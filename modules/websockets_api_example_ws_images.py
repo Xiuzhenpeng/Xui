@@ -9,6 +9,7 @@ import json
 import random
 import urllib.request
 import urllib.parse
+import time
 
 import gradio as gr
 
@@ -34,40 +35,10 @@ def get_history(prompt_id):
     with urllib.request.urlopen("http://{}/history/{}".format(server_address, prompt_id)) as response:
         return json.loads(response.read())
 
-def get_images(ws, prompt, url):
+def get_images(ws, prompt, url, progress=gr.Progress()):
     prompt_id = queue_prompt(prompt, url)['prompt_id']
     output_images = {}
     current_node = ""
-    while True:
-        out = ws.recv()
-        if isinstance(out, str):
-            message = json.loads(out)
-            if message['type'] == 'executing':
-                data = message['data']
-                if data['prompt_id'] == prompt_id:
-                    if data['node'] is None:
-                        break #Execution is done
-                    else:
-                        current_node = data['node']
-        else:
-            if current_node == 'save_image_websocket_node':
-                images_output = output_images.get(current_node, [])
-                images_output.append(out[8:])
-                output_images[current_node] = images_output
-
-    return output_images
-
-def inference_image(data, url, progress=gr.Progress()):
-    prompt = data
-
-    # prompt = json.loads(prompt_text)
-    prompt_id = queue_prompt(prompt, url)['prompt_id']
-    output_images = {}
-    current_node = ""
-
-    ws = websocket.WebSocket()
-    ws.connect("ws://{}/ws?clientId={}".format(url, client_id))
-
     while True:
         out = ws.recv()
         if isinstance(out, str):
@@ -83,6 +54,7 @@ def inference_image(data, url, progress=gr.Progress()):
                 data = message['data']
                 if data['prompt_id'] == prompt_id:
                     if data['node'] is None:
+                        progress(1, desc="Finished",)
                         break #Execution is done
                     else:
                         current_node = data['node']
@@ -92,23 +64,35 @@ def inference_image(data, url, progress=gr.Progress()):
                 images_output.append(out[8:])
                 output_images[current_node] = images_output
 
-    for node_id in output_images:
-        for image_data in output_images[node_id]:
+    return output_images
+
+def inference_image(data, url, progress=gr.Progress()):
+    prompt = data
+
+    ws = websocket.WebSocket()
+    ws.connect("ws://{}/ws?clientId={}".format(url, client_id))
+
+    images = get_images(ws, prompt, url, gr.Progress())
+
+    for node_id in images:
+        for image_data in images[node_id]:
             from PIL import Image
             import io
             image = Image.open(io.BytesIO(image_data))
+
+    time.sleep(0.2)
 
     return image
 
 
 if __name__ == "__main__":
-    server_address = "127.0.0.1:8199"
+    server_address = "127.0.0.1:8188"
 
     from change_json import change_file
-    data = change_file.change_无(1, 1920, 1080, "a beautiful girl")
+    data = change_file.change_无(1, 1024, 1024, "a car running on city")
 
     image = inference_image(data, server_address)
 
-    image.show()
+    # image.show()
 # else:
 #     from modules.change_json import change_json_file

@@ -79,6 +79,18 @@ class change_file():
          data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
          
          return data
+    
+    def change_真实内饰(seed, width, height, prompt):
+         data = load_json_data("真实内饰")
+         if seed == -1:
+                seed = random.randint(1, 2 ** 32 - 1)
+         data["25"]["inputs"]["noise_seed"] = int(seed)
+         data["27"]["inputs"]["width"] = int(width)
+         data["27"]["inputs"]["height"] = int(height)
+         bais_prompt = data["6"]["inputs"]["text"]
+         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+         
+         return data
 
 
 if __name__ == "__main__":
