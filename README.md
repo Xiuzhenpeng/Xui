@@ -10,5 +10,5 @@
 
 ## TO DO
     
-    ~~多卡支持~~
-    controlnet
+    - ~~多卡支持~~
+    - controlnet
