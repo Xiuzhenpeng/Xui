@@ -91,7 +91,8 @@ if __name__ == "__main__":
     from change_json import change_file
     data = change_file.change_无(1, 1024, 1024, "a car running on city")
 
-    image = inference_image(data, server_address)
+    image = get_history("'4b33a209-d24c-4bcb-92dd-3c4e11a68e1a")
+    print(image)
 
     # image.show()
 # else:
