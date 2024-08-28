@@ -9,6 +9,5 @@
     启动监听less_busy_url
 
 ## TO DO
-    
-    - ~~多卡支持~~
-    - controlnet
+- ~~多卡支持~~
+- controlnet
