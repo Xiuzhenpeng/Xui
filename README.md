@@ -1,3 +1,14 @@
-version https://git-lfs.github.com/spec/v1
-oid sha256:243cab67b4ece9b48f4ee7aba0165536116604aaaca5894fdb8df370e31ed529
-size 211
+# Xui
+
+## 启动说明
+
+    启动时需要 python app.py
+    启动gradio的主页面
+
+    需要启动modules/gpus_queue_https.py
+    启动监听less_busy_url
+
+## TO DO
+    
+    ~~多卡支持
+    controlnet
