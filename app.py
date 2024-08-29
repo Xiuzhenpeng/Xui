@@ -88,7 +88,7 @@ with gr.Blocks() as demo:
 
                     # from comfyui.upload_image import upload_image
 
-                    user_image = gr.Image(type="pil", label="Controlnet图片", sources=('upload', 'clipboard'))
+                    user_image = gr.Image(height=360, type="pil", label="Controlnet图片", sources=('upload', 'clipboard'))
                     controlnet_image_name = gr.Textbox(visible=False)
                     user_image.clear(fn=lambda: "", outputs=controlnet_image_name)
 
@@ -101,8 +101,15 @@ with gr.Blocks() as demo:
                         controlnet_strength = gr.Slider(0, 1, label="Controlnet权重", value=1,
                                                         info="权重数值越大和Controlnet图片相似度越高", interactive=True)
                         with gr.Row():
+                            def controlnet_number(numb1, numb2):
+                                if numb1 > numb2:
+                                    gr.Warning('介入时机要小于终止时机')
+
                             controlnet_start = gr.Slider(0, 1, label="介入时机", interactive=True)
                             controlnet_end = gr.Slider(0, 1, label="终止时机", value=1, interactive=True)
+
+                            controlnet_start.change(controlnet_number, inputs=[controlnet_start, controlnet_end])
+                            controlnet_end.change(controlnet_number, inputs=[controlnet_start, controlnet_end])
 
                 with gr.Tab("🎨Style"):
                     images = [
