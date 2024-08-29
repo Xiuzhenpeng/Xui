@@ -17,8 +17,18 @@ def load_json_data(name):
 # “无” 风格
 class change_file():
      
-    def change_无(seed, width, height, prompt):
-        data = load_json_data("无")
+    def change_无(seed, width, height, prompt, cn_img_name, strength=1, start=0, end=1,):
+        if cn_img_name == "":
+            data = load_json_data("无")
+        else:
+             data = load_json_data("无_controlnet")             
+             data["10"]["inputs"]["image"] = cn_img_name
+             data["13"]["inputs"]["image_gen_width"] = width
+             data["13"]["inputs"]["image_gen_height"] = height
+             data["9"]["inputs"]["strength"] = f"{strength}"
+             data["9"]["inputs"]["start_percent"] = f"{start}"
+             data["9"]["inputs"]["end_percent"] = f"{end}"
+
         if seed == -1:
                 seed = random.randint(1, 2 ** 32 - 1)
         data["3"]["inputs"]["seed"] = int(seed)
