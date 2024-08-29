@@ -1,5 +1,6 @@
 import random
 import argparse
+import requests
 
 import gradio as gr
 
@@ -18,12 +19,30 @@ args = parser.parse_args()
 
 if __name__ == "__main__":
 
-    address = f"127.0.0.1:{args.comfy_port}"
+    # address = f"127.0.0.1:{args.comfy_port}"
+
+    comfyurls = [
+    "127.0.0.1:8160",
+    "127.0.0.1:8161",
+    # 添加更多URL...
+    ]
+
+# 获取less busy url
+def get_least_busy_url(monitor_service_url="http://localhost:5000"):
+    try:
+        response = requests.get(f"{monitor_service_url}/least_busy_url")
+        data = response.json()
+        return data["least_busy_url"]
+    except requests.RequestException as e:
+        print(f"Error connecting to monitor service: {e}")
+        return comfyurls[0]
 
 
 # 对进行推理的 gradio 界面的参数进行预处理返回image
 def inference_image_preprocess(style_name, random_seed: bool, seed_number, image_aspect_ratio, user_prompt, 
                                cn_img_name, strength, start, end):
+
+    address = get_least_busy_url()
     # return json 格式
     json_file = load_json_data(style_name)
 
@@ -137,9 +156,10 @@ with gr.Blocks() as demo:
                     style_name = gr.Radio(value="无", choices=images_labels, label="风格选择", interactive=True)
 
     generate.click(inference_image_preprocess, 
-                   inputs=[
-                       style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
-                       controlnet_image_name, controlnet_strength, controlnet_start, controlnet_end],
-                   outputs=image_show)
+                   inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
+                           controlnet_image_name, controlnet_strength, controlnet_start, controlnet_end],
+                   outputs=image_show,
+                   concurrency_limit=2
+                   )
 
 demo.launch(share=False, server_port=args.port, max_file_size="5mb")
