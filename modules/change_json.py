@@ -21,7 +21,7 @@ class change_file():
         if cn_img_name == "":
             data = load_json_data("无")
         else:
-             data = load_json_data("无_controlnet")             
+             data = load_json_data("无_controlnet")
              data["10"]["inputs"]["image"] = cn_img_name
              data["13"]["inputs"]["image_gen_width"] = width
              data["13"]["inputs"]["image_gen_height"] = height
@@ -34,6 +34,8 @@ class change_file():
         data["3"]["inputs"]["seed"] = int(seed)
         data["5"]["inputs"]["width"] = int(width)
         data["5"]["inputs"]["height"] = int(height)
+
+        # 在无style的情况下，用户的输入会完全生效，没有基础提示词
         if prompt == "":
             bais_prompt = data["6"]["inputs"]["text"]
             data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
@@ -42,8 +44,18 @@ class change_file():
 
         return data
     
-    def change_经典渲染(seed, width, height, prompt):
-         data = load_json_data("经典渲染")
+    def change_经典渲染(seed, width, height, prompt, cn_img_name, strength=1, start=0, end=1,):
+         if cn_img_name == "":
+             data = load_json_data("经典渲染")
+         else:
+            data = load_json_data("经典渲染_controlnet")
+            data["10"]["inputs"]["image"] = cn_img_name
+            data["13"]["inputs"]["image_gen_width"] = width
+            data["13"]["inputs"]["image_gen_height"] = height
+            data["9"]["inputs"]["strength"] = f"{strength}"
+            data["9"]["inputs"]["start_percent"] = f"{start}"
+            data["9"]["inputs"]["end_percent"] = f"{end}"
+
          if seed == -1:
                 seed = random.randint(1, 2 ** 32 - 1)
          data["3"]["inputs"]["seed"] = int(seed)
@@ -54,8 +66,18 @@ class change_file():
          
          return data
     
-    def change_绚丽鲜橙(seed, width, height, prompt):
-         data = load_json_data("绚丽鲜橙")
+    def change_绚丽鲜橙(seed, width, height, prompt, cn_img_name, strength=1, start=0, end=1,):
+         if cn_img_name == "":
+             data = load_json_data("绚丽鲜橙")
+         else:
+            data = load_json_data("绚丽鲜橙_controlnet")
+            data["10"]["inputs"]["image"] = cn_img_name
+            data["13"]["inputs"]["image_gen_width"] = width
+            data["13"]["inputs"]["image_gen_height"] = height
+            data["9"]["inputs"]["strength"] = f"{strength}"
+            data["9"]["inputs"]["start_percent"] = f"{start}"
+            data["9"]["inputs"]["end_percent"] = f"{end}"
+
          if seed == -1:
                 seed = random.randint(1, 2 ** 32 - 1)
          data["3"]["inputs"]["seed"] = int(seed)
@@ -66,41 +88,77 @@ class change_file():
          
          return data
     
-    def change_真实照片(seed, width, height, prompt):
-         data = load_json_data("真实照片")
-         if seed == -1:
+    def change_真实照片(seed, width, height, prompt, cn_img_name, strength=1, start=0, end=1,):
+        if cn_img_name == "":
+            data = load_json_data("真实照片")
+        else:
+             data = load_json_data("真实照片_controlnet")
+             data["10"]["inputs"]["image"] = cn_img_name
+             data["13"]["inputs"]["image_gen_width"] = width
+             data["13"]["inputs"]["image_gen_height"] = height
+             data["9"]["inputs"]["strength"] = f"{strength}"
+             data["9"]["inputs"]["start_percent"] = f"{start}"
+             data["9"]["inputs"]["end_percent"] = f"{end}"
+
+        if seed == -1:
                 seed = random.randint(1, 2 ** 32 - 1)
-         data["3"]["inputs"]["seed"] = int(seed)
-         data["5"]["inputs"]["width"] = int(width)
-         data["5"]["inputs"]["height"] = int(height)
-         bais_prompt = data["6"]["inputs"]["text"]
-         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+        data["3"]["inputs"]["seed"] = int(seed)
+        data["5"]["inputs"]["width"] = int(width)
+        data["5"]["inputs"]["height"] = int(height)
+        bais_prompt = data["6"]["inputs"]["text"]
+        data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
          
-         return data
+        return data
     
-    def change_马克笔手绘(seed, width, height, prompt):
-         data = load_json_data("马克笔手绘")
-         if seed == -1:
-                seed = random.randint(1, 2 ** 32 - 1)
-         data["3"]["inputs"]["seed"] = int(seed)
-         data["5"]["inputs"]["width"] = int(width)
-         data["5"]["inputs"]["height"] = int(height)
-         bais_prompt = data["6"]["inputs"]["text"]
-         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+    def change_马克笔手绘(seed, width, height, prompt, cn_img_name, strength=1, start=0, end=1,):
+        if cn_img_name == "":
+            data = load_json_data("马克笔手绘")
+        else:
+             data = load_json_data("马克笔手绘_controlnet")
+             data["10"]["inputs"]["image"] = cn_img_name
+             data["13"]["inputs"]["image_gen_width"] = width
+             data["13"]["inputs"]["image_gen_height"] = height
+             data["9"]["inputs"]["strength"] = f"{strength}"
+             data["9"]["inputs"]["start_percent"] = f"{start}"
+             data["9"]["inputs"]["end_percent"] = f"{end}"
+
+        if seed == -1:
+            seed = random.randint(1, 2 ** 32 - 1)
+        data["3"]["inputs"]["seed"] = int(seed)
+        data["5"]["inputs"]["width"] = int(width)
+        data["5"]["inputs"]["height"] = int(height)
+        bais_prompt = data["6"]["inputs"]["text"]
+        data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
          
-         return data
+        return data
     
-    def change_真实内饰(seed, width, height, prompt):
-         data = load_json_data("真实内饰")
-         if seed == -1:
-                seed = random.randint(1, 2 ** 32 - 1)
-         data["25"]["inputs"]["noise_seed"] = int(seed)
-         data["27"]["inputs"]["width"] = int(width)
-         data["27"]["inputs"]["height"] = int(height)
-         bais_prompt = data["6"]["inputs"]["text"]
-         data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
-         
-         return data
+    def change_真实内饰(seed, width, height, prompt, cn_img_name, strength=1, start=0, end=1,):
+        if seed == -1:
+            seed = random.randint(1, 2 ** 32 - 1)
+
+        if cn_img_name == "":
+            data = load_json_data("真实内饰")
+            data["25"]["inputs"]["noise_seed"] = int(seed)
+            data["27"]["inputs"]["width"] = int(width)
+            data["27"]["inputs"]["height"] = int(height)
+            bais_prompt = data["6"]["inputs"]["text"]
+            data["6"]["inputs"]["text"] = f"{prompt}, {bais_prompt}"
+
+        else:
+            data = load_json_data("真实内饰_controlnet")
+            data["3"]["inputs"]["noise_seed"] = int(seed)
+            data["6"]["inputs"]["width"] = int(width)
+            data["6"]["inputs"]["height"] = int(height)
+            bais_prompt = data["5"]["inputs"]["clip_l"]
+            data["5"]["inputs"]["clip_l"] = f"{prompt}, {bais_prompt}"
+            data["5"]["inputs"]["t5xxl"] = f"{prompt}, {bais_prompt}"
+            data["16"]["inputs"]["image"] = cn_img_name
+
+            data["49"]["inputs"]["image_gen_width"] = width
+            data["49"]["inputs"]["image_gen_height"] = height
+            data["14"]["inputs"]["strength"] = strength * 0.7
+        
+        return data
 
 
 if __name__ == "__main__":
