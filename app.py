@@ -22,7 +22,8 @@ if __name__ == "__main__":
 
 
 # 对进行推理的 gradio 界面的参数进行预处理返回image
-def inference_image_preprocess(style_name, random_seed: bool, seed_number, image_aspect_ratio, user_prompt,):
+def inference_image_preprocess(style_name, random_seed: bool, seed_number, image_aspect_ratio, user_prompt, 
+                               cn_img_name, strength, start, end):
     # return json 格式
     json_file = load_json_data(style_name)
 
@@ -48,7 +49,10 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
 
     change_method_name = f"change_{style_name}"
     change_method = getattr(change_file, change_method_name)
-    json_file = change_method(seed, width, heigh, prompt)
+    if cn_img_name == "":
+        json_file = change_method(seed, width, heigh, prompt, cn_img_name)
+    else:
+        json_file = change_method(seed, width, heigh, prompt, cn_img_name, strength, start, end)
 
     image = inference_image(json_file, address)
 
@@ -89,11 +93,14 @@ with gr.Blocks() as demo:
                     # from comfyui.upload_image import upload_image
 
                     user_image = gr.Image(height=360, type="pil", label="Controlnet图片", sources=('upload', 'clipboard'))
-                    controlnet_image_name = gr.Textbox(visible=False)
-                    user_image.clear(fn=lambda: "", outputs=controlnet_image_name)
+                    controlnet_image_name = gr.Textbox(visible=True)
 
-                    upload_url = "http://127.0.0.1:816/upload/image"
-                    # controlnetimagename = user_image.change(lambda img: upload_image(img, upload_url), user_image, outputs=[controlnet_image_name])
+                    from modules.upload_image import upload_image
+                    user_image.upload(lambda img: upload_image(img, address), user_image, outputs=controlnet_image_name)
+                    user_image.clear(fn=lambda: "", outputs=controlnet_image_name)
+                    
+                    
+                    # controlnetimagename = user_image.change(lambda img: upload_image(img, address), user_image, outputs=[controlnet_image_name])
 
                     gr.Radio(value="Lineart", choices=["Lineart",], label="选择ControlNet种类")
 
@@ -101,15 +108,15 @@ with gr.Blocks() as demo:
                         controlnet_strength = gr.Slider(0, 1, label="Controlnet权重", value=1,
                                                         info="权重数值越大和Controlnet图片相似度越高", interactive=True)
                         with gr.Row():
-                            def controlnet_number(numb1, numb2):
+                            def controlnet_number_waring (numb1, numb2):
                                 if numb1 > numb2:
                                     gr.Warning('介入时机要小于终止时机')
 
                             controlnet_start = gr.Slider(0, 1, label="介入时机", interactive=True)
                             controlnet_end = gr.Slider(0, 1, label="终止时机", value=1, interactive=True)
 
-                            controlnet_start.change(controlnet_number, inputs=[controlnet_start, controlnet_end])
-                            controlnet_end.change(controlnet_number, inputs=[controlnet_start, controlnet_end])
+                            controlnet_start.change(controlnet_number_waring, inputs=[controlnet_start, controlnet_end])
+                            controlnet_end.change(controlnet_number_waring, inputs=[controlnet_start, controlnet_end])
 
                 with gr.Tab("🎨Style"):
                     images = [
@@ -129,6 +136,10 @@ with gr.Blocks() as demo:
                             label="风格展示", interactive=False, format="png", allow_preview=False)
                     style_name = gr.Radio(value="无", choices=images_labels, label="风格选择", interactive=True)
 
-    generate.click(inference_image_preprocess, inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt], outputs=image_show)
+    generate.click(inference_image_preprocess, 
+                   inputs=[
+                       style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
+                       controlnet_image_name, controlnet_strength, controlnet_start, controlnet_end],
+                   outputs=image_show)
 
-demo.launch(share=False, server_port=args.port,)
+demo.launch(share=False, server_port=args.port, max_file_size="5mb")
