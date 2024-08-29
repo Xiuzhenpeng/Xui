@@ -1,0 +1,203 @@
+{
+  "3": {
+    "inputs": {
+      "noise_seed": 573198163144631,
+      "steps": 25,
+      "timestep_to_start_cfg": 1,
+      "true_gs": 3.5,
+      "model": [
+        "32",
+        0
+      ],
+      "conditioning": [
+        "5",
+        0
+      ],
+      "neg_conditioning": [
+        "19",
+        0
+      ],
+      "latent_image": [
+        "6",
+        0
+      ],
+      "controlnet_condition": [
+        "14",
+        0
+      ]
+    },
+    "class_type": "XlabsSampler",
+    "_meta": {
+      "title": "Xlabs Sampler"
+    }
+  },
+  "4": {
+    "inputs": {
+      "clip_name1": "clip_l.safetensors",
+      "clip_name2": "t5xxl_fp16.safetensors",
+      "type": "flux"
+    },
+    "class_type": "DualCLIPLoader",
+    "_meta": {
+      "title": "DualCLIPLoader"
+    }
+  },
+  "5": {
+    "inputs": {
+      "clip_l": "the interior of a car, specifically the driver's seat and the dashboard, The car has a modern design with a black leather steering wheel and a large touch screen display in the center console, The display shows various app icons and information about the car's features, The seats are upholstered in a light grey fabric and have two cup holders on either side for storage, The interior of the car is clean and well-maintained, with no visible signs of wear and tear,mountains out of windows, sunshine, black fabric seats, a white suede steering wheel,",
+      "t5xxl": "the interior of a car, specifically the driver's seat and the dashboard, The car has a modern design with a black leather steering wheel and a large touch screen display in the center console, The display shows various app icons and information about the car's features, The seats are upholstered in a light grey fabric and have two cup holders on either side for storage, The interior of the car is clean and well-maintained, with no visible signs of wear and tear,mountains out of windows, sunshine, black fabric seats, a white suede steering wheel,",
+      "guidance": 4,
+      "clip": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncodeFlux",
+    "_meta": {
+      "title": "CLIPTextEncodeFlux"
+    }
+  },
+  "6": {
+    "inputs": {
+      "width": 1344,
+      "height": 768,
+      "batch_size": 1
+    },
+    "class_type": "EmptyLatentImage",
+    "_meta": {
+      "title": "Empty Latent Image"
+    }
+  },
+  "7": {
+    "inputs": {
+      "samples": [
+        "3",
+        0
+      ],
+      "vae": [
+        "8",
+        0
+      ]
+    },
+    "class_type": "VAEDecode",
+    "_meta": {
+      "title": "VAE Decode"
+    }
+  },
+  "8": {
+    "inputs": {
+      "vae_name": "ae.safetensors"
+    },
+    "class_type": "VAELoader",
+    "_meta": {
+      "title": "Load VAE"
+    }
+  },
+  "13": {
+    "inputs": {
+      "model_name": "flux-dev",
+      "controlnet_path": "flux-canny-controlnet-v3.safetensors"
+    },
+    "class_type": "LoadFluxControlNet",
+    "_meta": {
+      "title": "Load Flux ControlNet"
+    }
+  },
+  "14": {
+    "inputs": {
+      "strength": 0.7000000000000001,
+      "controlnet": [
+        "13",
+        0
+      ],
+      "image": [
+        "52",
+        0
+      ]
+    },
+    "class_type": "ApplyFluxControlNet",
+    "_meta": {
+      "title": "Apply Flux ControlNet"
+    }
+  },
+  "16": {
+    "inputs": {
+      "image": "2020_audi_rs_q3_91_2560x1440.png",
+      "upload": "image"
+    },
+    "class_type": "LoadImage",
+    "_meta": {
+      "title": "Load Image"
+    }
+  },
+  "19": {
+    "inputs": {
+      "clip_l": "bad photo",
+      "t5xxl": "bad photo",
+      "guidance": 4,
+      "clip": [
+        "4",
+        0
+      ]
+    },
+    "class_type": "CLIPTextEncodeFlux",
+    "_meta": {
+      "title": "CLIPTextEncodeFlux"
+    }
+  },
+  "32": {
+    "inputs": {
+      "unet_name": "flux1-dev_wheelsage_interior_4.safetensors",
+      "weight_dtype": "default"
+    },
+    "class_type": "UNETLoader",
+    "_meta": {
+      "title": "Load Diffusion Model"
+    }
+  },
+  "49": {
+    "inputs": {
+      "image_gen_width": 1344,
+      "image_gen_height": 768,
+      "resize_mode": "Crop and Resize",
+      "hint_image": [
+        "16",
+        0
+      ]
+    },
+    "class_type": "HintImageEnchance",
+    "_meta": {
+      "title": "Enchance And Resize Hint Images"
+    }
+  },
+  "52": {
+    "inputs": {
+      "merge_with_lineart": "lineart_standard",
+      "resolution": 1280,
+      "lineart_lower_bound": 0,
+      "lineart_upper_bound": 1,
+      "object_min_size": 36,
+      "object_connectivity": 1,
+      "image": [
+        "49",
+        0
+      ]
+    },
+    "class_type": "AnyLineArtPreprocessor_aux",
+    "_meta": {
+      "title": "AnyLine Lineart"
+    }
+  },
+  "53": {
+    "inputs": {
+      "images": [
+        "7",
+        0
+      ]
+    },
+    "class_type": "SaveImageWebsocket",
+    "_meta": {
+      "title": "SaveImageWebsocket"
+    }
+  }
+}
