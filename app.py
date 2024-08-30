@@ -57,8 +57,8 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
         width = 1024
         heigh = 1024
     if image_aspect_ratio == '16:9':
-        width = 1456
-        heigh = 816
+        width = 1344
+        heigh = 756
     if image_aspect_ratio == '18:9':
         width = 1600
         heigh = 800
@@ -86,7 +86,7 @@ with gr.Blocks() as demo:
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1, min_width=300):
                     with gr.Column():
-                        image_aspect_ratio = gr.Radio(value='1:1', label="✅ 图片比例", choices=['1:1', '16:9', '18:9'],
+                        image_aspect_ratio = gr.Radio(value='16:9', label="✅ 图片比例", choices=['1:1', '16:9', '18:9'],
                                                     container=True, interactive=True, min_width=10,)
                     with gr.Row():
                         seed = random.randint(1, 2 ** 32 - 1)
@@ -119,8 +119,9 @@ with gr.Blocks() as demo:
                     images_labels = ["无"] + [lable for _, lable in images]
                     
                     style_pics = gr.Gallery(value=images, object_fit="contain", show_download_button=False, 
-                            label="风格展示", interactive=False, format="png", allow_preview=False,)
-                    style_name = gr.Text()
+                            label="风格展示", interactive=False, format="png", allow_preview=False, height=660,
+                            container=False, selected_index=0)
+                    style_name = gr.Text(visible=False)
 
                     def on_select(evt: gr.SelectData):
                         return f"{images[evt.index][1]}"
@@ -156,6 +157,30 @@ with gr.Blocks() as demo:
 
                             controlnet_start.change(controlnet_number_waring, inputs=[controlnet_start, controlnet_end])
                             controlnet_end.change(controlnet_number_waring, inputs=[controlnet_start, controlnet_end])
+
+                # 用户建议
+                with gr.Tab("🎤意见与建议"):
+                    
+                    gr.Markdown("""#### 如果你觉得有什么使用上的不便
+                                #### 或有其他方面的建议或建议
+                                #### 可以在下面留言""")
+                    
+                    user_flag = gr.Textbox(container=False, placeholder="在这里写下留言，确认提交")
+                    btn = gr.Button("提交")
+                    
+                    callback = gr.CSVLogger()
+                    callback.setup([user_flag], "flagged_data_points")
+
+                    def suggest(*args):
+                        
+                        if args[0] == "":
+                            gr.Warning('你输入内容了吗')
+                            
+                        else:                            
+                            gr.Info("成功提交")
+                            return callback.flag(list(args))
+
+                    btn.click(suggest, inputs=user_flag, outputs=None)
 
     generate.click(inference_image_preprocess, 
                    inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 

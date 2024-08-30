@@ -10,4 +10,5 @@
 
 ## TO DO
 - ~~多卡支持~~
-- controlnet
+- ~~controlnet~~
+- ~~用户建议~~
