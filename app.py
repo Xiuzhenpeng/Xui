@@ -172,8 +172,8 @@ with gr.Blocks(css=css) as demo:
                 with gr.Tab("🎤意见与建议"):
                     
                     gr.Markdown("""#### 如果你觉得有什么使用上的不便
-                                #### 或有其他方面的建议或建议
-                                #### 可以在下面留言""")
+                                #### 或有其他方面的建议或意见
+                                #### 欢迎在下面留言""")
                     
                     user_flag = gr.Textbox(container=False, placeholder="在这里写下留言，确认提交")
                     btn = gr.Button("提交")
