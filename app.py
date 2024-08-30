@@ -40,8 +40,8 @@ def get_least_busy_url(monitor_service_url="http://localhost:5000"):
 
 # 对进行推理的 gradio 界面的参数进行预处理返回image
 def inference_image_preprocess(style_name, random_seed: bool, seed_number, image_aspect_ratio, user_prompt, 
-                               cn_img_name, strength, start, end):
-
+                               cn_img_name, strength, start, end):    
+    
     address = get_least_busy_url()
     # return json 格式
     json_file = load_json_data(style_name)
@@ -106,19 +106,39 @@ with gr.Blocks() as demo:
                 # comfy_server_address = gr.Textbox(value=address, visible=False)
                 
         with gr.Column(scale=1,):
+                with gr.Tab("🎨Style"):
+                    images = [
+                        ("./style_pics/a1.png", "无"),
+                        ("./style_pics/20240821_090405.png", "真实内饰"),
+                        ("./style_pics/00131-1676567236.png", "经典渲染"),
+                        ("./style_pics/00213-636703613.png", "绚丽鲜橙"),
+                        ("./style_pics/00021-1676567236.png", "真实照片"),
+                        ("./style_pics/00052-1493661434.png", "马克笔手绘"),                        
+                    ]
+
+                    images_labels = ["无"] + [lable for _, lable in images]
+                    
+                    style_pics = gr.Gallery(value=images, object_fit="contain", show_download_button=False, 
+                            label="风格展示", interactive=False, format="png", allow_preview=False,)
+                    style_name = gr.Text()
+
+                    def on_select(evt: gr.SelectData):
+                        return f"{images[evt.index][1]}"
+                    style_pics.select(on_select, inputs=[], outputs=[style_name])
+
                 # Controlnet
                 with gr.Tab("🔧ControlNet", visible=True):
 
                     # from comfyui.upload_image import upload_image
 
                     user_image = gr.Image(height=360, type="pil", label="Controlnet图片", sources=('upload', 'clipboard'))
-                    controlnet_image_name = gr.Textbox(visible=True)
+                    controlnet_image_name = gr.Textbox(visible=False)
 
                     from modules.upload_image import upload_image
+                    address = get_least_busy_url()
                     user_image.upload(lambda img: upload_image(img, address), user_image, outputs=controlnet_image_name)
                     user_image.clear(fn=lambda: "", outputs=controlnet_image_name)
-                    
-                    
+                                        
                     # controlnetimagename = user_image.change(lambda img: upload_image(img, address), user_image, outputs=[controlnet_image_name])
 
                     gr.Radio(value="Lineart", choices=["Lineart",], label="选择ControlNet种类")
@@ -137,24 +157,6 @@ with gr.Blocks() as demo:
                             controlnet_start.change(controlnet_number_waring, inputs=[controlnet_start, controlnet_end])
                             controlnet_end.change(controlnet_number_waring, inputs=[controlnet_start, controlnet_end])
 
-                with gr.Tab("🎨Style"):
-                    images = [
-                        ("./style_pics/00131-1676567236.png", "经典渲染"),
-                        ("./style_pics/00213-636703613.png", "绚丽鲜橙"),
-                        ("./style_pics/00021-1676567236.png", "真实照片"),
-                        ("./style_pics/00052-1493661434.png", "马克笔手绘"),
-                        ("./style_pics/20240821_090405.png", "真实内饰"),
-                    ]
-
-                    images_labels = ["无"] + [lable for _, lable in images]
-
-                    def display_gallery():
-                        return images
-
-                    gr.Gallery(value=display_gallery, object_fit="contain", show_download_button=False, 
-                            label="风格展示", interactive=False, format="png", allow_preview=False)
-                    style_name = gr.Radio(value="无", choices=images_labels, label="风格选择", interactive=True)
-
     generate.click(inference_image_preprocess, 
                    inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
                            controlnet_image_name, controlnet_strength, controlnet_start, controlnet_end],
@@ -162,4 +164,5 @@ with gr.Blocks() as demo:
                    concurrency_limit=2
                    )
 
-demo.launch(share=False, server_port=args.port, max_file_size="5mb")
+demo.launch(server_name="0.0.0.0",share=False, server_port=args.port, max_file_size="5mb",
+            ssl_keyfile="./mydomain.key", ssl_certfile="./mydomain.crt", ssl_verify=False)
