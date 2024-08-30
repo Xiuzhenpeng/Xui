@@ -27,6 +27,16 @@ if __name__ == "__main__":
     # 添加更多URL...
     ]
 
+css = """
+#aspect-ratio-label .label-wrap {
+    font-size: 3em;
+    font-weight: bold;
+}
+#user_prompt-textbox {
+    height: 143px !important;
+}
+"""
+
 # 获取less busy url
 def get_least_busy_url(monitor_service_url="http://localhost:5000"):
     try:
@@ -78,7 +88,7 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
     return image
 
 
-with gr.Blocks() as demo:
+with gr.Blocks(css=css) as demo:
     with gr.Row(equal_height=False):
         with gr.Column(scale=2, ):
             image_show = gr.Image(height=500, show_label=False, interactive=False)
@@ -189,5 +199,5 @@ with gr.Blocks() as demo:
                    concurrency_limit=2
                    )
 
-demo.launch(server_name="0.0.0.0",share=False, server_port=args.port, max_file_size="5mb",
+demo.launch(server_name="127.0.0.1",share=False, server_port=args.port, max_file_size="5mb",
             ssl_keyfile="./mydomain.key", ssl_certfile="./mydomain.crt", ssl_verify=False)
