@@ -200,4 +200,5 @@ with gr.Blocks(css=css) as demo:
                    )
 
 demo.launch(server_name="127.0.0.1",share=False, server_port=args.port, max_file_size="5mb",
-            ssl_keyfile="./mydomain.key", ssl_certfile="./mydomain.crt", ssl_verify=False)
+            ssl_keyfile="./mydomain.key", ssl_certfile="./mydomain.crt", ssl_verify=False,
+            show_api=False)
