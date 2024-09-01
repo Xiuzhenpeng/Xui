@@ -12,4 +12,5 @@
 - ~~多卡支持~~
 - ~~controlnet~~
 - ~~用户建议~~
-- example
+- ~~example~~
+- ~~主题~~
