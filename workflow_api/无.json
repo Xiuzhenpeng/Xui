@@ -51,7 +51,7 @@
   },
   "6": {
     "inputs": {
-      "text": "a sport car running on road, winter, snow",
+      "text": "a sport car running on road, winter, snow, {front|side|front side view|rear side view}",
       "clip": [
         "4",
         1

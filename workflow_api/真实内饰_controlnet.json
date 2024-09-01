@@ -44,8 +44,8 @@
   },
   "5": {
     "inputs": {
-      "clip_l": "the interior of a car, specifically the driver's seat and the dashboard, The car has a {black|white} leather steering wheel, The steering wheel has various buttons and controls for the car's infotainment system, On the right side of the steering wheel, there is a large touch screen display that shows {map|car's information|a mountain landscape with a blue sky in the background}, The display also has various app icons and buttons for controlling the car, The interior of the interior is clean and modern, with a sleek design,",
-      "t5xxl": "the interior of a car, specifically the driver's seat and the dashboard, The car has a {black|white} leather steering wheel, The steering wheel has various buttons and controls for the car's infotainment system, On the right side of the steering wheel, there is a large touch screen display that shows {map|car's information|a mountain landscape with a blue sky in the background}, The display also has various app icons and buttons for controlling the car, The interior of the interior is clean and modern, with a sleek design,",
+      "clip_l": "the interior of a car, specifically the driver's seat and the dashboard, The interior of the interior is clean and modern, with a sleek design,",
+      "t5xxl": "the interior of a car, specifically the driver's seat and the dashboard, The interior of the interior is clean and modern, with a sleek design,",
       "guidance": 4,
       "clip": [
         "4",
