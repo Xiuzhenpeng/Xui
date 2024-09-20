@@ -1,0 +1,13 @@
+.progress-bar > .generating {
+    display: none !important;
+  }
+  
+.progress-bar{
+height: 30px !important;
+}
+  
+.progress-bar span {
+    text-align: right;
+    width: 215px;
+}
+  
