@@ -17,22 +17,22 @@ import requests
 from modules.html import make_progress_html
 import gradio as gr
 
-# def update_progress(progress, text="Progressing"):
-#     # 将浮点数转换为百分比
-#     percent = int(progress * 100)
+def update_progress(progress, text="Progressing"):
+    # 将浮点数转换为百分比
+    percent = int(progress * 100)
     
-#     # 创建 HTML 进度条的代码，并添加文字描述
-#     progress_html = f"""
-#     <div style="font-size: 15px; padding-bottom: 3px;">
-#         {text}
-#     </div>
-#     <div style="width: 100%; background-color: #ddd;">
-#         <div style="width: {percent}%; padding: 3px; height: 10px; background-color: #4CAF50; text-align: right; color: white;">
-#             {percent}%
-#         </div>
-#     </div>
-#     """
-#     return progress_html
+    # 创建 HTML 进度条的代码，并添加文字描述
+    progress_html = f"""
+    <div style="font-size: 15px; padding-bottom: 3px;">
+        {text}
+    </div>
+    <div style="width: 100%; background-color: #ddd;">
+        <div style="width: {percent}%; padding: 3px; height: 10px; background-color: #4CAF50; text-align: right; color: white;">
+            {percent}%
+        </div>
+    </div>
+    """
+    return progress_html
 
 def get_new_session(url):
     data = json.dumps({}).encode('utf-8')
