@@ -4,9 +4,10 @@ import requests
 from io import BytesIO
 import base64
 from PIL import Image
-
+import modules.html
 import gradio as gr
 import websocket #NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
+import modules.websockets_api_swarmui_ws_images
 
 from modules.websockets_api_swarmui_ws_images import get_image
 from modules.change_json import load_json_data
@@ -15,7 +16,7 @@ from modules.change_swarmui_json import change_file
 parser = argparse.ArgumentParser(description="An example script.")
 
 parser.add_argument("--port", type=int, default="8016", help="This app running on this port")
-parser.add_argument("--swarmui",type=str, default="localhost:7801", help="SwarmUi running on this address")
+parser.add_argument("--swarmui",type=str, default="192.168.58.14:7801", help="SwarmUi running on this address")
 
 args = parser.parse_args()
 address = args.swarmui
@@ -28,6 +29,7 @@ css = """
 #user_prompt-textbox {
     height: 143px !important;
 }
+
 """
 
 js_func = """
@@ -92,14 +94,16 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
 
     ws = websocket.WebSocket()
 
-    image_generator = get_image(ws, address, prompt_data)
+    image_generator,progress_generator= get_image(ws, address, prompt_data)
     
     for image in image_generator:
         if image is not None:
             yield image
+    for  progress_html in progress_generator:
+        yield gr.update(value=progress_html)
+          
 
-
-with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
+with gr.Blocks(css="styles.css", js=js_func, theme=theme, title="IAT Design") as demo:
     gr.Markdown(
         """# IAT Design
         ##### 此页面目前处于Alpha阶段。仅用于效果展示，不保证图片质量
@@ -108,7 +112,7 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
     with gr.Row(equal_height=False):
         with gr.Column(scale=2, ):
             image_show = gr.Image(label="展示图片", height=500, show_label=False, interactive=False)
-            # progress = gr.HTML(show_label=False, elem_id='progress-bar', elem_classes='progress-bar')
+            progress = gr.HTML(value=modules.html.make_progress_html(32, 'Progress 32%'), visible=True,elem_id='progress-bar', elem_classes='progress-bar')
             gr.Markdown("### ⚙️ 基础设置")
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1, min_width=300):
@@ -207,7 +211,7 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
     generate.click(inference_image_preprocess, 
                    inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
                            user_image, controlnet_strength, controlnet_start, controlnet_end,],
-                   outputs=[image_show,],
+                   outputs=[image_show,progress,],
                    concurrency_limit=2
                    )
     
@@ -229,6 +233,6 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
                 )
 
 if __name__ == "__main__":
-    demo.launch(server_name="0.0.0.0", share=False, server_port=args.port, max_file_size="5mb",
+    demo.launch(server_name="127.0.0.1", share=False, server_port=args.port, max_file_size="5mb",
             # ssl_keyfile="./mydomain.key", ssl_certfile="./mydomain.crt", ssl_verify=False,
             show_api=False, debug=True,)

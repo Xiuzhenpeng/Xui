@@ -1,0 +1,39 @@
+.loader-container{
+    display:flex;
+    align-items:center;
+    white-space:nowrap;
+  }
+  
+  .progress-container {
+    margin-right: 20px;
+    flex-grow: 1; 
+  }
+
+  progress {
+  appearance: none; 
+  height: 20px; 
+  border-radius: 5px; 
+  background-color: #f3f3f3; 
+  width: 100%;
+  vertical-align: middle !important;
+  }
+
+  progress::-webkit-progress-value {
+    background-color: #3498db; 
+  }
+  .loader-container > span {
+    margin-left: 5px; 
+  }
+
+  .progress-bar > .generating {
+    display: none !important;
+  }
+
+  .progress-bar{
+    height: 20px !important;
+  }
+
+  .progress-bar span {
+      text-align: right;
+      width: 215px;
+  }
