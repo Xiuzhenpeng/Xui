@@ -16,6 +16,7 @@ from io import BytesIO
 import requests
 
 import gradio as gr
+from .updata_html import make_progress_html
 
 def update_progress(progress, text="Progressing"):
     # 将浮点数转换为百分比
@@ -101,6 +102,8 @@ def get_image(ws, url, prompt_data):
             if isinstance(out, str):
                 try:
                     message = json.loads(out)
+                    if "status" in message:
+                        yield gr.update(value=None), gr.update(visible=True, value=make_progress_html(0, "Loading model"))
                     if 'gen_progress' in message:
                         data = message["gen_progress"]
                         if 'preview' in data:
@@ -114,19 +117,20 @@ def get_image(ws, url, prompt_data):
                                 yield None
                             else:
                                 # 从第二个图像开始传递给 Gradio
-                                yield image
+                                current_percent = data["current_percent"]
+                                yield image, gr.update(visible=True, value=make_progress_html(current_percent * 100, "Progressing"))
 
                     if "image" in message:
                         image_name = message["image"]
                         image_url = f"http://{url}/{image_name}"
                         response = requests.get(image_url)
                         image = Image.open(BytesIO(response.content))
-                        image_counter += 1
-                        if image_counter <= 2:
-                            yield None
-                        else:
-                            yield image
-                    if "discard_indices" in message:
+                        # image_counter += 1
+                        # if image_counter <= 2:
+                        #     yield None
+                        # else:
+                        yield image, gr.update(visible=False)
+                    # if "discard_indices" in message:
                         ws.close()
                 except:
                     ws.close()

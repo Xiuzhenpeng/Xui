@@ -1,3 +1,4 @@
+import os
 import random
 import argparse
 import requests
@@ -8,14 +9,18 @@ from PIL import Image
 import gradio as gr
 import websocket #NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
 
+
+
 from modules.websockets_api_swarmui_ws_images import get_image
 from modules.change_json import load_json_data
 from modules.change_swarmui_json import change_file
 
+from modules.updata_html import make_progress_html
+
 parser = argparse.ArgumentParser(description="An example script.")
 
 parser.add_argument("--port", type=int, default="8016", help="This app running on this port")
-parser.add_argument("--swarmui",type=str, default="localhost:7801", help="SwarmUi running on this address")
+parser.add_argument("--swarmui",type=str, default="localhost:7801", help="SwarmUi running on this address. Default is localhost:7801")
 
 args = parser.parse_args()
 address = args.swarmui
@@ -99,6 +104,9 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
             yield image
 
 
+with open(os.path.join(os.path.dirname(__file__), "style.css"), "r") as f:
+    css = f.read()
+
 with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
     gr.Markdown(
         """# IAT Design
@@ -106,9 +114,10 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
         默认深色主题，点击切换[浅色主题](https://192.168.58.22:8016/?__theme=light)，[深色主题](https://192.168.58.22:8016/?__theme=dark) ❗️切换主题会导致界面刷新，丢失当前界面信息
         """)
     with gr.Row(equal_height=False):
-        with gr.Column(scale=2, ):
+        with gr.Column(scale=2,):
             image_show = gr.Image(label="展示图片", height=500, show_label=False, interactive=False)
-            # progress = gr.HTML(show_label=False, elem_id='progress-bar', elem_classes='progress-bar')
+            progress = gr.HTML(value=make_progress_html(30, "loading model"), show_label=False, 
+                               visible=False, elem_id='progress-bar', elem_classes='progress-bar')
             gr.Markdown("### ⚙️ 基础设置")
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1, min_width=300):
@@ -207,7 +216,7 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
     generate.click(inference_image_preprocess, 
                    inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
                            user_image, controlnet_strength, controlnet_start, controlnet_end,],
-                   outputs=[image_show,],
+                   outputs=[image_show, progress],
                    concurrency_limit=2
                    )
     
