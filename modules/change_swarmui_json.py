@@ -56,21 +56,23 @@ class change_file():
             
         else:
             prompt_data = {
-                "session_id": "",
+                "session_id":"",
                 "images": 1,
-                "gridgenpresets":"真实内饰_controlnet",
-                "comfyuicustomworkflow": "真实内饰_controlnet",
-                "comfyrawworkflowinputtextunetloadernodeunetnamebg": "flux1-dev.safetensors",
-                "comfyrawworkflowinputseedxlabssamplernodenoiseseedd":seed,
-                "width":width,
-                "height":height,
+                "cfgscale": 1,
+                "steps": 20,
+                "model":"flux1-dev-fp8.safetensors",
+                # "gridgenpresets":"真实内饰_controlnet",
+                "comfyuicustomworkflow":"真实内饰_controlnet",
+                "seed":seed,
                 "initimage":img,
-                "comfyrawworkflowinputdecimalapplyfluxcontrolnetnodestrengtho":0.75 * strength,
-                "comfyrawworkflowinputtextcliptextencodefluxnodecliplf":f"{prompt}, {controlnet_base_prompt}",
-                "comfyrawworkflowinputtextcliptextencodefluxnodetxxlf":f"{prompt}, {controlnet_base_prompt}",
-                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthbx": width,
-                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightbx": height
+                "comfyrawworkflowinputdecimalpositivepromptnodestrengtho": 0.5 * strength,
+                "textcliptextencodepositivepromptnodetextx":f"{prompt}, {controlnet_base_prompt}",
+                "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbc": height,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbc": width,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightbg":height,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthbg":width,
             }
+
         return prompt_data
     
     def change_经典渲染(seed, width, height, prompt, img, strength=1, start=0, end=1,):
@@ -211,4 +213,40 @@ class change_file():
                 "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthn":width,
                 "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightn":height
             }
+        return prompt_data
+
+    def change_Toyota(seed, width, height, prompt, img, strength=1, start=0, end=1,): 
+        base_prompt = "a car, a toyota car, <random:toyota_porte, toyota_sera, toyota_tacoma_trd_off-road_double_cab, toyota_ts030_hybrid_test_car, toyota_proace_city_van_electric, toyota_raize_hybrid_z> a toyota car <random:running on road, parking in room, studio light>"
+        controlnet_base_prompt = "a car, toyota car, toyota exterior design"
+
+        if img == None:
+            prompt_data = {
+                "session_id": "",
+                "images": 1,
+                "gridgenpresets":"Toyota",
+                "comfyuicustomworkflow": "Toyota",
+                "comfyrawworkflowinputseedrandomnoisenodenoiseseedz":seed,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbb":width,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbb":height,
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextg":f"{prompt}, {base_prompt}",
+            }
+
+        else:
+            prompt_data = {
+                "session_id":"",
+                "images": 1,
+                "steps": 20,
+                "model":"flux1-dev-fp8.safetensors",
+                "width": width,
+                "height": height,
+                "initimage":img,
+                "comfyuicustomworkflow":"Toyota_controlnet",
+                "comfyrawworkflowinputseedxlabssamplernodenoiseseedd":seed,
+                "comfyrawworkflowinputdecimalapplyfluxcontrolnetnodestrengtho": 0.7 * strength,
+                "comfyrawworkflowinputtextcliptextencodefluxnodecliplf":f"{prompt}, {controlnet_base_prompt}",
+                "comfyrawworkflowinputtextcliptextencodefluxnodetxxlf":f"{prompt}, {controlnet_base_prompt}",
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightby": height,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthby": width,
+            }
+
         return prompt_data

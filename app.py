@@ -82,7 +82,7 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
         height = "1024"
     if image_aspect_ratio == '16:9':
         width = "1344"
-        height = "756"
+        height = "768"
     if image_aspect_ratio == '18:9':
         width = "1600"
         height = "800"
@@ -146,7 +146,8 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
                         ("./style_pics/a1.png", "无"),
                         ("./style_pics/20240821_090405.png", "真实内饰"),
                         ("./style_pics/00131-1676567236.png", "经典渲染"),
-                        ("./style_pics/00213-636703613.png", "绚丽鲜橙"),
+                        ("./style_pics/Toyota_00221_.png", "Toyota"),
+                        # ("./style_pics/00213-636703613.png", "绚丽鲜橙"),
                         ("./style_pics/00021-1676567236.png", "真实照片"),
                         ("./style_pics/00052-1493661434.png", "马克笔手绘"),
                     ]                    
@@ -227,6 +228,7 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
                 return image_show, image_aspect_ratio, gr.update(value=seed_number, visible=True), gr.update(value=False), user_image, user_prompt, gr.update(selected_index=index)
             
     examples = [
+        ["./examples/5.webp", "16:9", 20000717, "./examples/5.jpg", "car ,toyota highlander, in room studio light,simple white background, real photo", "Toyota",],
         ["./examples/1.webp", "16:9", 20000816, "./examples/1.jpg", "simple background, yellow car", "马克笔手绘",],
         ["./examples/3.png", "16:9", 357378276, "./examples/2.png", "the interior of a car, sunshine, The car has a black leather steering wheel, The dashboard has a large touch screen display, The seats are upholstered in white leather and there are two side mirrors on either side of the steering wheel. The windows are tinted and provide a view of the outside, mountains out of windows, white seats", "真实内饰",],
     ]
