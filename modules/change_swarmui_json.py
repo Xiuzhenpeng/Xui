@@ -61,12 +61,11 @@ class change_file():
                 "cfgscale": 1,
                 "steps": 20,
                 "model":"flux1-dev-fp8.safetensors",
-                # "gridgenpresets":"真实内饰_controlnet",
                 "comfyuicustomworkflow":"真实内饰_controlnet",
                 "seed":seed,
                 "initimage":img,
                 "comfyrawworkflowinputdecimalpositivepromptnodestrengtho": 0.5 * strength,
-                "textcliptextencodepositivepromptnodetextx":f"{prompt}, {controlnet_base_prompt}",
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextx":f"{prompt}, {controlnet_base_prompt}",
                 "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbc": height,
                 "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbc": width,
                 "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightbg":height,
@@ -235,18 +234,54 @@ class change_file():
             prompt_data = {
                 "session_id":"",
                 "images": 1,
+                "cfgscale": 1,
                 "steps": 20,
                 "model":"flux1-dev-fp8.safetensors",
-                "width": width,
-                "height": height,
-                "initimage":img,
                 "comfyuicustomworkflow":"Toyota_controlnet",
-                "comfyrawworkflowinputseedxlabssamplernodenoiseseedd":seed,
-                "comfyrawworkflowinputdecimalapplyfluxcontrolnetnodestrengtho": 0.7 * strength,
-                "comfyrawworkflowinputtextcliptextencodefluxnodecliplf":f"{prompt}, {controlnet_base_prompt}",
-                "comfyrawworkflowinputtextcliptextencodefluxnodetxxlf":f"{prompt}, {controlnet_base_prompt}",
-                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightby": height,
-                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthby": width,
+                "seed":seed,
+                "initimage":img,
+                "comfyrawworkflowinputdecimalpositivepromptnodestrengtho": 0.8 * strength,
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextx":f"{prompt}, {controlnet_base_prompt}",
+                "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbc": height,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbc": width,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightbg":height,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthbg":width,
+            }
+
+        return prompt_data
+
+    def change_Volkswagen(seed, width, height, prompt, img, strength=1, start=0, end=1,): 
+        base_prompt = "a car, a Volkswagen car, <random:volkswagen_polo, volkswagen_golf, volkswagen_tiguan, volkswagen_passat, volkswagen_jetta, volkswagen_touareg>, the car <random:running on road, parking in room, running in city, studio light>"
+        controlnet_base_prompt = "a car, volkswagen car, volkswagen exterior design"
+
+        if img == None:
+            prompt_data = {
+                "session_id": "",
+                "images": 1,
+                "gridgenpresets":"Toyota",
+                "comfyuicustomworkflow": "Toyota",
+                "comfyrawworkflowinputseedrandomnoisenodenoiseseedz":seed,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbb":width,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbb":height,
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextg":f"{prompt}, {base_prompt}",
+            }
+
+        else:
+            prompt_data = {
+                "session_id":"",
+                "images": 1,
+                "cfgscale": 1,
+                "steps": 20,
+                "model":"flux1-dev-fp8.safetensors",
+                "comfyuicustomworkflow":"Toyota_controlnet",
+                "seed":seed,
+                "initimage":img,
+                "comfyrawworkflowinputdecimalpositivepromptnodestrengtho": 0.8 * strength,
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextx":f"{prompt}, {controlnet_base_prompt}",
+                "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbc": height,
+                "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbc": width,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenheightbg":height,
+                "comfyrawworkflowinputintegerhintimageenchancenodeimagegenwidthbg":width,
             }
 
         return prompt_data
