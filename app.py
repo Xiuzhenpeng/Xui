@@ -115,7 +115,7 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
         """)
     with gr.Row(equal_height=False):
         with gr.Column(scale=2,):
-            image_show = gr.Image(label="展示图片", height=500, show_label=False, interactive=False)
+            image_show = gr.Image(label="展示图片", height=500, show_label=False, interactive=False, format="png")
             progress = gr.HTML(value=make_progress_html(30, "loading model"), show_label=False, 
                                visible=False, elem_id='progress-bar', elem_classes='progress-bar')
             gr.Markdown("### ⚙️ 基础设置")
@@ -145,8 +145,9 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
                     images = [
                         ("./style_pics/a1.png", "无"),
                         ("./style_pics/20240821_090405.png", "真实内饰"),
-                        ("./style_pics/00131-1676567236.png", "经典渲染"),
+                        # ("./style_pics/00131-1676567236.png", "经典渲染"),
                         ("./style_pics/Toyota_00221_.png", "Toyota"),
+                        ("./style_pics/Volkswagen.png", "Volkswagen"),
                         # ("./style_pics/00213-636703613.png", "绚丽鲜橙"),
                         ("./style_pics/00021-1676567236.png", "真实照片"),
                         ("./style_pics/00052-1493661434.png", "马克笔手绘"),
@@ -242,4 +243,4 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
 if __name__ == "__main__":
     demo.launch(server_name="0.0.0.0", share=False, server_port=args.port, max_file_size="5mb",
             # ssl_keyfile="./mydomain.key", ssl_certfile="./mydomain.crt", ssl_verify=False,
-            show_api=False, debug=True,)
+            favicon_path='./favicon.ico',show_api=False, debug=True,)
