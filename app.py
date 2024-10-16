@@ -229,7 +229,7 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
                 return image_show, image_aspect_ratio, gr.update(value=seed_number, visible=True), gr.update(value=False), user_image, user_prompt, gr.update(selected_index=index)
             
     examples = [
-        ["./examples/5.webp", "16:9", 20000717, "./examples/5.jpg", "car ,toyota highlander, in room studio light,simple white background, real photo", "Toyota",],
+        ["./examples/toyota.webp", "16:9", 20000717, "./examples/toyota_highlander_hybrid_96.jpeg", "car ,toyota highlander, in room studio light,simple white background, real photo", "Toyota",],
         ["./examples/1.webp", "16:9", 20000816, "./examples/1.jpg", "simple background, yellow car", "马克笔手绘",],
         ["./examples/3.png", "16:9", 357378276, "./examples/2.png", "the interior of a car, sunshine, The car has a black leather steering wheel, The dashboard has a large touch screen display, The seats are upholstered in white leather and there are two side mirrors on either side of the steering wheel. The windows are tinted and provide a view of the outside, mountains out of windows, white seats", "真实内饰",],
     ]
