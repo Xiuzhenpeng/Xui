@@ -46,6 +46,23 @@ function refresh() {
     }
 }
 """
+shortcut_js = """
+<script>
+function shortcuts(e) {
+    var event = document.all ? window.event : e;
+    switch (e.target.tagName.toLowerCase()) {
+        case "input":
+        case "textarea":
+        break;
+        default:
+        if (e.key === "Enter" && e.ctrlKey) {
+            document.getElementById("genterate_button").click();
+        }
+    }
+}
+document.addEventListener('keydown', shortcuts, false);
+</script>
+"""
 
 theme = gr.themes.Soft(
     primary_hue="sky",
@@ -107,7 +124,7 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
 with open(os.path.join(os.path.dirname(__file__), "style.css"), "r") as f:
     css = f.read()
 
-with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
+with gr.Blocks(css=css, js=js_func, head=shortcut_js, theme=theme, title="IAT Design") as demo:
     gr.Markdown(
         """# IAT Design
         ##### 此页面目前处于Alpha阶段。仅用于效果展示，不保证图片质量
@@ -136,9 +153,9 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
 
                 with gr.Column(scale=4):
                     user_prompt = gr.Textbox(label="提示词", placeholder="⌨️输入你的提示词", lines=6, show_label=False, container=False,
-                                            elem_id="user_prompt-textbox")
+                                            autofocus=True, elem_id="user_prompt-textbox")
             with gr.Column(min_width=200):
-                generate = gr.Button(value="生成图片", size='lg', variant='primary')
+                generate = gr.Button(value="生成图片", size='lg', variant='primary', elem_id="genterate_button")
                 
         with gr.Column(scale=1,):
                 with gr.Tab("🎨Style"):
@@ -215,12 +232,14 @@ with gr.Blocks(css=css, js=js_func, theme=theme, title="IAT Design") as demo:
 
                     btn.click(suggest, inputs=user_flag, outputs=None)
 
-    generate.click(inference_image_preprocess, 
-                   inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
-                           user_image, controlnet_strength, controlnet_start, controlnet_end,],
-                   outputs=[image_show, progress],
-                   concurrency_limit=2
-                   )
+    gr.on(
+        triggers=[user_prompt.submit, generate.click],
+        fn=inference_image_preprocess, 
+        inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
+        user_image, controlnet_strength, controlnet_start, controlnet_end,],
+        outputs=[image_show, progress],
+        concurrency_limit=2
+        )
     
 # Example
     def select_image_by_description(image_show, image_aspect_ratio, seed_number, user_image, user_prompt, description):
