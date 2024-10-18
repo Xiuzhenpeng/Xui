@@ -6,6 +6,7 @@ import requests
 from io import BytesIO
 import base64
 from PIL import Image
+import numpy as np
 
 import gradio as gr
 import websocket #NOTE: websocket-client (https://github.com/websocket-client/websocket-client)
@@ -124,8 +125,11 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
         if result != None:
             url, value = result
             if isinstance(url, str):
-                    generate_history.insert(0, (url,None))
-                    yield url, value, gr.update(value=generate_history)
+                response = requests.get(url)
+                image = Image.open(BytesIO(response.content))
+                image_array = np.array(image)
+                generate_history.insert(0, (image_array,None))
+                yield url, value, gr.update(value=generate_history)
             else:
                 yield {image_show: url, progress: value}
 
