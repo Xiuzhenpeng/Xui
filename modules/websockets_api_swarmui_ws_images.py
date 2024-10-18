@@ -123,13 +123,13 @@ def get_image(ws, url, prompt_data):
                     if "image" in message:
                         image_name = message["image"]
                         image_url = f"http://{url}/{image_name}"
-                        response = requests.get(image_url)
-                        image = Image.open(BytesIO(response.content))
+                        # response = requests.get(image_url)
+                        # image = Image.open(BytesIO(response.content))
                         # image_counter += 1
                         # if image_counter <= 2:
                         #     yield None
                         # else:
-                        yield image, gr.update(visible=False)
+                        yield image_url, gr.update(visible=False)
                     # if "discard_indices" in message:
                         ws.close()
                 except:
