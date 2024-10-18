@@ -1,4 +1,5 @@
 import os
+import ast
 import random
 import argparse
 import requests
@@ -86,7 +87,10 @@ def convert_image(img):
 
 # 对进行推理的 gradio 界面的参数进行预处理返回image
 def inference_image_preprocess(style_name, random_seed: bool, seed_number, image_aspect_ratio, user_prompt, 
-                               cn_img, strength, start, end,):
+                               cn_img, strength, start, end, generate_history):
+    if generate_history == None:
+        generate_history = []
+    
     # def seed
     if random_seed == True:
         seed = -1
@@ -116,10 +120,14 @@ def inference_image_preprocess(style_name, random_seed: bool, seed_number, image
 
     image_generator = get_image(ws, address, prompt_data)
     
-    for image in image_generator:
-        if image is not None:
-            yield image
-
+    for result in image_generator:
+        if result != None:
+            url, value = result
+            if isinstance(url, str):
+                    generate_history.insert(0, (url,None))
+                    yield url, value, gr.update(value=generate_history)
+            else:
+                yield {image_show: url, progress: value}
 
 with open(os.path.join(os.path.dirname(__file__), "style.css"), "r") as f:
     css = f.read()
@@ -232,12 +240,14 @@ with gr.Blocks(css=css, js=js_func, head=shortcut_js, theme=theme, title="IAT De
 
                     btn.click(suggest, inputs=user_flag, outputs=None)
 
+    generate_history = gr.Gallery(label="生成历史", columns=8, height="8em", interactive=False, object_fit="contain")
+
     gr.on(
         triggers=[user_prompt.submit, generate.click],
-        fn=inference_image_preprocess, 
-        inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt, 
-        user_image, controlnet_strength, controlnet_start, controlnet_end,],
-        outputs=[image_show, progress],
+        fn=inference_image_preprocess,
+        inputs=[style_name, random_seed, seed_number, image_aspect_ratio, user_prompt,
+        user_image, controlnet_strength, controlnet_start, controlnet_end, generate_history],
+        outputs=[image_show, progress, generate_history],
         concurrency_limit=2
         )
     
