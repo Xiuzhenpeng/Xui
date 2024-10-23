@@ -222,12 +222,12 @@ class change_file():
             prompt_data = {
                 "session_id": "",
                 "images": 1,
-                "gridgenpresets":"Toyota",
+                # "gridgenpresets":"真实内饰",
                 "comfyuicustomworkflow": "Toyota",
                 "comfyrawworkflowinputseedrandomnoisenodenoiseseedz":seed,
                 "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbb":width,
                 "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbb":height,
-                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextg":f"{prompt}, {base_prompt}",
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextg":f"{prompt}, {base_prompt}"
             }
 
         else:
@@ -262,12 +262,12 @@ class change_file():
             prompt_data = {
                 "session_id": "",
                 "images": 1,
-                "gridgenpresets":"Toyota",
+                # "gridgenpresets":"真实内饰",
                 "comfyuicustomworkflow": "Toyota",
                 "comfyrawworkflowinputseedrandomnoisenodenoiseseedz":seed,
                 "comfyrawworkflowinputintegeremptysdlatentimagenodewidthbb":width,
                 "comfyrawworkflowinputintegeremptysdlatentimagenodeheightbb":height,
-                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextg":f"{prompt}, {base_prompt}",
+                "comfyrawworkflowinputtextcliptextencodepositivepromptnodetextg":f"{prompt}, {base_prompt}"
             }
 
         else:
